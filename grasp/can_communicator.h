@@ -46,7 +46,6 @@ extern const double tau_cov_const_v4; // 1200.0 for SAH040xxxxx
 // functions declarations
 char Getch();
 void PrintInstruction();
-void MainLoop();
 bool OpenCAN();
 void CloseCAN();
 int GetCANChannelIndex(const TCHAR* cname);

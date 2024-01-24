@@ -196,76 +196,7 @@ static void* ioThreadProc(void* inst)
     return NULL;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Application main-loop. It handles the commands from rPanelManipulator and keyboard events
-void MainLoop()
-{
-    bool bRun = true;
 
-    while (bRun)
-    {
-        int c = Getch();
-        switch (c)
-        {
-        case 'q':
-            if (pBHand) pBHand->SetMotionType(eMotionType_NONE);
-            bRun = false;
-            break;
-
-        case 'h':
-            if (pBHand) pBHand->SetMotionType(eMotionType_HOME);
-            break;
-
-        case 'r':
-            if (pBHand) pBHand->SetMotionType(eMotionType_READY);
-            break;
-
-        case 'g':
-            if (pBHand) pBHand->SetMotionType(eMotionType_GRASP_3);
-            break;
-
-        case 'k':
-            if (pBHand) pBHand->SetMotionType(eMotionType_GRASP_4);
-            break;
-
-        case 'p':
-            if (pBHand) pBHand->SetMotionType(eMotionType_PINCH_IT);
-            break;
-
-        case 'm':
-            if (pBHand) pBHand->SetMotionType(eMotionType_PINCH_MT);
-            break;
-
-        case 'a':
-            if (pBHand) pBHand->SetMotionType(eMotionType_GRAVITY_COMP);
-            break;
-
-        case 'e':
-            if (pBHand) pBHand->SetMotionType(eMotionType_ENVELOP);
-            break;
-
-        case 'f':
-            if (pBHand) pBHand->SetMotionType(eMotionType_NONE);
-            break;
-
-        case '1':
-            MotionRock();
-            break;
-
-        case '2':
-            MotionScissors();
-            break;
-
-        case '3':
-            MotionPaper();
-            break;
-        
-        case '7': 
-            MotionCustom1();
-            break;
-        }
-    }
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Compute control torque for each joint using BHand library
