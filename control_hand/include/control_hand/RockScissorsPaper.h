@@ -9,5 +9,6 @@ void custom1();
 void custom2();
 void custom3();
 void reset(); 
+void wrong_answer();
 
 #endif

@@ -44,6 +44,9 @@ private:
         reset();        
     }
 
+    // CURRENT GESTURES: 0: rock, 1: paper, 2: scissors, 4: OK!, 5: (no no no sequence)
+    
+
     void move_callback(
         const control_hand::srv::Move::Request::SharedPtr request,
         control_hand::srv::Move::Response::SharedPtr response)
@@ -64,7 +67,11 @@ private:
                 break;
 
             case 3:
-                custom3();
+                custom1();
+                break;
+
+            case 9: 
+                wrong_answer();
                 break;
             
             default:

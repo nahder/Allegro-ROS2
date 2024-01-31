@@ -3,6 +3,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 from control_hand.srv import Move
+import numpy as np 
 
 #CURRENT GESTURES: 0: rock, 1: paper, 2: scissors
 
@@ -32,6 +33,7 @@ class AllegroGame(Node):
     
     
     def timer_cb(self):
+        
         #after the player has done the same gestures, increment round and let the timer then move on to generate new gestures 
         pass         
         
@@ -41,3 +43,14 @@ def main(args=None):
     rclpy.spin(allegro_game)
     allegro_game.destroy_node()
     rclpy.shutdown()
+    
+#game starts with issuing one gesture to the hand 
+#then, give the player 3 seconds to do the same gesture
+
+    #if the player does not do the same gesture, the robot will do a "no no no" gesture and the game will reset 
+    
+    #if the player does the same gesture, the robot will do a "yes" gesture and the game will continue
+
+#after 3 seconds, round will be incremented, and the robot will generate #round number of gestures 
+
+

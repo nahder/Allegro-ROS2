@@ -41,6 +41,22 @@ static double cust3[] = {
 	0.405, 0.798, 0.863, 0.202
 };
 
+//6,10 to max,15 to slightly below max, 
+//3 to min,
+static double nonono1[] = {  //jt 5,9
+	-0.47471316618668479, 0.386, 0.174, -0.22753605719833834, 
+	0.205, 1.636, 1.709, 0.227, 
+	0.0, 1.636, 1.709, 0.32,
+	0.263, 0.410, 0.911, 1.5 
+};
+
+static double nonono2[] = {  //jt 5,9
+	0.47181227113054078, 0.386, 0.174, -0.22753605719833834, 
+	0.205, 1.636, 1.709, 0.227, 
+	0.0, 1.636, 1.709, 0.32,
+	0.263, 0.410, 0.911, 1.5 
+};
+
 
 extern BHand* pBHand;
 extern double q_des[MAX_DOF];
@@ -134,6 +150,29 @@ void custom3()
 		q_des[i] = cust3[i];
 	if (pBHand) pBHand->SetMotionType(eMotionType_JOINT_PD);
 	SetGainsRSP();
+}
+#include<unistd.h>
+unsigned int microsecond = 1000000;
+
+
+//TODO: use state machine instead of delay
+void wrong_answer() { 
+	//cycle between nonono1,2,3 two times
+	for (int i=0; i<2; i++) { 
+		for (int j=0; j<16; j++) {
+			q_des[j] = nonono1[j];
+		}
+		if (pBHand) pBHand->SetMotionType(eMotionType_JOINT_PD);
+		SetGainsRSP();
+		usleep(0.2*microsecond);
+
+		for (int j=0; j<16; j++) {
+			q_des[j] = nonono2[j];
+		}
+		if (pBHand) pBHand->SetMotionType(eMotionType_JOINT_PD);
+		SetGainsRSP();
+		usleep(0.20*microsecond);
+	}
 }
 
 void reset() { 
