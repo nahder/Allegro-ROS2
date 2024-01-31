@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 from .submodules.model import KeyPointClassifier
 from .utils import calc_landmark_list, pre_process_landmark
-# import .submodules.landmark_utils as u 
 
 class GestureClassifier(Node):
 
@@ -28,7 +27,7 @@ class GestureClassifier(Node):
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5)
 
-        self.timer = self.create_timer(0.1, self.timer_cb)
+        self.timer = self.create_timer(0.5, self.timer_cb) 
 
     def timer_cb(self):
         success, image = self.cap.read()
