@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'allegro_game = allegro_game.allegro_game:main'
+            'allegro_game = allegro_game.allegro_game:main',
+            'delay = allegro_game.delay:main'
         ],
     },
 )

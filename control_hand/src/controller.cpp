@@ -67,15 +67,20 @@ private:
                 break;
 
             case 3:
-                custom1();
+                custom1(); //okay, good! gesture
                 break;
 
             case 9: 
                 wrong_answer();
                 break;
+                
+            case -100:
+                reset();
+                break; 
             
             default:
                 RCLCPP_ERROR(this->get_logger(), "Invalid configuration");
+                RCLCPP_ERROR(this->get_logger(), "received: %d", request->config_idx);
                 response->success = false;
                 break;
         }

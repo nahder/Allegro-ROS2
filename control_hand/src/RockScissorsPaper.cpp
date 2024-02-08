@@ -58,7 +58,6 @@ static double nonono2[] = {  //jt 5,9
 	0.263, 0.410, 0.911, 1.5 
 };
 
-
 extern BHand* pBHand;
 extern double q_des[MAX_DOF];
 
