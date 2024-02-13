@@ -64,6 +64,8 @@ DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
   srv
+  meshes
+  urdf
   DESTINATION share/${PROJECT_NAME}
 )
 

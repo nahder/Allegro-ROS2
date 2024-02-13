@@ -14,7 +14,6 @@ class State(Enum):
     IN_SEQUENCE = auto() #if the robot has gestures left
     FINISHED_SEQUENCE = auto() #if the robot has no gestures left
     
-
 #CURRENT GESTURES: 0: rock, 1: paper, 2: scissors,(3: okay,  9: nonono) 
 class AllegroGame(Node):
     def __init__(self):
@@ -26,17 +25,19 @@ class AllegroGame(Node):
         self.reset_client = self.create_client(Trigger, 'controller/reset') 
         self.delay_client = self.create_client(Empty, 'delay')
         
+        gesture_dict = {0: "rock", 1: "paper", 2: "scissors"}
+        
         self.player_gesture = None
         self.moves = []
         self.round = 5
 
-        self.robot_perform_gestures()
+        self.game_loop()
     # Performs all the gestures in the moves list
     # Send a reset move in between every gesture (config_idx = -100)
     
-    def robot_perform_gestures(self):
+    def game_loop(self):
         request = Move.Request()
-        self.moves = [-100, 1, -100, 1, -100, 2, -100]
+        self.moves = [-100, 0, -100, 1, -100, 2]
         
         for move in self.moves:
             request.config_idx = move
@@ -47,8 +48,9 @@ class AllegroGame(Node):
         self.future = self.delay_client.call_async(Empty.Request())
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()
+    
+    
 
-        
         # self.get_logger().info('Gesture length: %s' % len(self.moves))
         # for move in self.moves:
         #     self.moves.pop(0)
@@ -75,8 +77,6 @@ class AllegroGame(Node):
     #         self.moves.append(gesture_idx)
     #         previous_gesture = gesture_idx
     
-    
-
     def player_gesture_cb(self, msg):
         self.player_gesture = msg.data 
         self.get_logger().info('Player did: %s' % self.player_gesture)
@@ -91,8 +91,7 @@ class AllegroGame(Node):
         # Set a timer to check the player's gesture after 2 seconds
         self.delay_timer = self.create_timer(timer_period_sec=2, callback=self.check_player_gesture)
         
-    def check_player_gesture(self):
-        self.delay_timer.cancel()  # Cancel the timer to prevent it from calling this method again
+    def check_player_gestures(self):
         if self.player_gesture == "scissors":  # Assuming the player_gesture is a string "1" if correct
             self.get_logger().info('Player did the same gesture')
             request = Move.Request()
@@ -104,16 +103,11 @@ class AllegroGame(Node):
             request.config_idx = 9  # "No no no" gesture
             self.move_client.call_async(request)
     
-    # def timer_cb(self):
-    #     pass 
-        # if self.start_game and len(self.moves)>0:
-        #     self.robot_gesture_generator()
-        #     for move in self.moves:
-        #         self.move(move)
-        #         self.moves.pop(0)
+
         
-        #after the player has done the same gestures, increment round and let the timer then move on to generate new gestures 
         
+#algorithm which, knowing the correct sequence of gestures, will wait for the player to do the same sequence of gestures
+#after the player has done the same sequence of gestures, the robot will do a "yes" gesture and the game will continue  
         
 def main(args=None):
     rclpy.init(args=args)

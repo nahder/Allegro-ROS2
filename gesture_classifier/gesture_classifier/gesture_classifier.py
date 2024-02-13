@@ -7,10 +7,11 @@ from .submodules.model import KeyPointClassifier
 from .utils import calc_landmark_list, pre_process_landmark
 from std_msgs.msg import String
 
+
 class GestureClassifier(Node):
 
     def __init__(self):
-        super().__init__('gesture_classifier')
+        super().__init__("gesture_classifier")
 
         self.kpclf = KeyPointClassifier()
         self.gestures = {
@@ -26,17 +27,18 @@ class GestureClassifier(Node):
         self.hands = self.mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=0.5,
-            min_tracking_confidence=0.5)
+            min_tracking_confidence=0.5,
+        )
 
-        self.timer = self.create_timer(0.01, self.timer_cb) 
-        
-        #set up publisher for detected gesture
-        self.gesture_pub = self.create_publisher(String, 'gesture', 10)
+        self.timer = self.create_timer(0.01, self.timer_cb)
+
+        # set up publisher for detected gesture
+        self.gesture_pub = self.create_publisher(String, "gesture", 10)
 
     def timer_cb(self):
         success, image = self.cap.read()
         if not success:
-            self.get_logger().error('Ignoring empty camera frame.')
+            self.get_logger().error("Ignoring empty camera frame.")
             return
 
         # Process the image
@@ -59,32 +61,30 @@ class GestureClassifier(Node):
                     hand_landmarks,
                     self.mp_hands.HAND_CONNECTIONS,
                     self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                    self.mp_drawing_styles.get_default_hand_connections_style())
+                    self.mp_drawing_styles.get_default_hand_connections_style(),
+                )
 
         # Handle gesture recognition result
-        
+
         gesture_msg = String()
         if gesture_index in self.gestures:
-            self.get_logger().info(f'Gesture detected: {self.gestures[gesture_index]}')
+            self.get_logger().info(f"Gesture detected: {self.gestures[gesture_index]}")
             gesture_msg.data = self.gestures[gesture_index]
         else:
-            self.get_logger().info('No gesture detected')
+            self.get_logger().info("No gesture detected")
             gesture_msg.data = "none"
-            
-        #TODO EITHER PUBLISH ACCURACY, OR TAKE AVERAGE OF LAST 5 GESTURES
-            
-        self.gesture_pub.publish(gesture_msg)
-        
 
-        #display the image
+        # TODO EITHER PUBLISH ACCURACY, OR TAKE AVERAGE OF LAST 5 GESTURES
+
+        self.gesture_pub.publish(gesture_msg)
+
+        # display the image
         final_image = cv2.flip(image, 1)
-        cv2.imshow('MediaPipe Hands', final_image)
+        cv2.imshow("MediaPipe Hands", final_image)
         if cv2.waitKey(5) & 0xFF == 27:
             self.cap.release()
             rclpy.shutdown()
-        
-#primarily using linux as operating system through the command line
-#have programming language in the description of resume projects, etc. show skills in resume other places
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -94,5 +94,6 @@ def main(args=None):
     cv2.destroyAllWindows()  # Close any OpenCV windows
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -173,6 +173,8 @@ void wrong_answer() {
 		SetGainsRSP();
 		usleep(0.2*microsecond);
 	}
+	usleep(0.2*microsecond);
+
 }
 
 void reset() { 
