@@ -22,11 +22,13 @@ add_library(
   src/RockScissorsPaper.cpp
 )
 
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 add_executable(controller src/controller.cpp)
+# add_executable(moveit_controller src/moveit_controller.cpp)
 
 ament_target_dependencies(controller rclcpp std_msgs std_srvs)
 
@@ -59,7 +61,9 @@ install(EXPORT control_hand-targets
   NAMESPACE control_hand::
   DESTINATION lib/cmake/${PROJECT_NAME}) 
   
-install(TARGETS controller
+install(TARGETS 
+controller
+# moveit_controller
 DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
