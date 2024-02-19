@@ -1,0 +1,5 @@
+#Request, muli float array
+float32[] joint_positions
+---
+#Response, bool
+bool success

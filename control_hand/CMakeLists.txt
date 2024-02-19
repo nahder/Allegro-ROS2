@@ -7,6 +7,10 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(moveit_common REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_core REQUIRED)
+find_package(moveit_ros_planning REQUIRED)
 
 include_directories(${rclcpp_INCLUDE_DIRS})
 
@@ -28,9 +32,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_executable(controller src/controller.cpp)
-# add_executable(moveit_controller src/moveit_controller.cpp)
+add_executable(moveit_controller src/moveit_controller.cpp)
 
 ament_target_dependencies(controller rclcpp std_msgs std_srvs)
+ament_target_dependencies(moveit_controller rclcpp std_msgs std_srvs moveit_ros_planning_interface moveit_core moveit_ros_planning)
 
 target_include_directories(control_hand
     PUBLIC
@@ -39,6 +44,7 @@ target_include_directories(control_hand
 
 rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
 "srv/Move.srv"
+"srv/SetJoints.srv"
 LIBRARY_NAME ${PROJECT_NAME}
 )
 
@@ -55,6 +61,7 @@ install(TARGETS control_hand
 install(DIRECTORY include/control_hand DESTINATION include)
 
 target_link_libraries(controller control_hand BHand pcanbasic pthread)
+target_link_libraries(moveit_controller control_hand BHand pcanbasic pthread)
 
 install(EXPORT control_hand-targets
   FILE control_hand-targets.cmake
@@ -63,7 +70,10 @@ install(EXPORT control_hand-targets
   
 install(TARGETS 
 controller
-# moveit_controller
+DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS 
+moveit_controller
 DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
