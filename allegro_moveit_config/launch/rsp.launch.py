@@ -3,5 +3,5 @@ from moveit_configs_utils.launches import generate_rsp_launch
 
 
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder("allegro_hand_right", package_name="Allegro_moveit_config").to_moveit_configs()
+    moveit_config = MoveItConfigsBuilder("allegro_hand_right", package_name="allegro_moveit_config").to_moveit_configs()
     return generate_rsp_launch(moveit_config)

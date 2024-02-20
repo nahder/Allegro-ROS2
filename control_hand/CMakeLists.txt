@@ -26,7 +26,6 @@ add_library(
   src/RockScissorsPaper.cpp
 )
 
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -52,21 +51,15 @@ rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME}_interfaces
   "rosidl_typesupport_cpp"
 )
 
-target_link_libraries(control_hand "${cpp_typesupport_target}")
 
-install(TARGETS control_hand
-  EXPORT control_hand-targets
-  DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY include/control_hand DESTINATION include)
 
 target_link_libraries(controller control_hand BHand pcanbasic pthread)
 target_link_libraries(moveit_controller control_hand BHand pcanbasic pthread)
+target_link_libraries(control_hand "${cpp_typesupport_target}")
 
-install(EXPORT control_hand-targets
-  FILE control_hand-targets.cmake
-  NAMESPACE control_hand::
-  DESTINATION lib/cmake/${PROJECT_NAME}) 
+
   
 install(TARGETS 
 controller
@@ -76,10 +69,20 @@ install(TARGETS
 moveit_controller
 DESTINATION lib/${PROJECT_NAME})
 
+install(TARGETS control_hand
+  EXPORT control_hand-targets
+  DESTINATION lib/${PROJECT_NAME})
+
+  install(EXPORT control_hand-targets
+  FILE control_hand-targets.cmake
+  NAMESPACE control_hand::
+  DESTINATION lib/cmake/${PROJECT_NAME}) 
+
 install(DIRECTORY
   srv
   meshes
   urdf
+  launch
   DESTINATION share/${PROJECT_NAME}
 )
 

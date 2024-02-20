@@ -52,11 +52,11 @@ private:
     );
     auto in_bounds = move_group.setJointValueTarget(joint_positions_double);
 
-    if (!in_bounds) {
-      RCLCPP_WARN(
-        this->get_logger(),
-        "clamping to joint limits");
-    }
+    // if (!in_bounds) {
+    //   RCLCPP_WARN(
+    //     this->get_logger(),
+    //     "clamping to joint limits");
+    // }
     move_group.setMaxVelocityScalingFactor(0.85);
     move_group.setMaxAccelerationScalingFactor(0.85);
     move_group.move();
@@ -89,6 +89,7 @@ private:
   void timer_callback()
   {
     //TODO
+
   }
 };
 

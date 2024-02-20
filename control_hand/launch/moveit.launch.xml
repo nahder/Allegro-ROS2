@@ -1,0 +1,11 @@
+<launch>
+
+  <include file="$(find-pkg-share allegro_moveit_config)/launch/demo.launch.py" />
+
+
+  <node pkg="control_hand" exec="moveit_controller" name="hello"/>
+
+
+
+
+</launch>
