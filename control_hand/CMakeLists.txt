@@ -11,6 +11,7 @@ find_package(moveit_common REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 include_directories(${rclcpp_INCLUDE_DIRS})
 
@@ -34,7 +35,7 @@ add_executable(controller src/controller.cpp)
 add_executable(moveit_controller src/moveit_controller.cpp)
 
 ament_target_dependencies(controller rclcpp std_msgs std_srvs)
-ament_target_dependencies(moveit_controller rclcpp std_msgs std_srvs moveit_ros_planning_interface moveit_core moveit_ros_planning)
+ament_target_dependencies(moveit_controller rclcpp sensor_msgs std_msgs std_srvs moveit_ros_planning_interface moveit_core moveit_ros_planning)
 
 target_include_directories(control_hand
     PUBLIC

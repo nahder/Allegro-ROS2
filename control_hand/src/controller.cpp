@@ -29,8 +29,6 @@ public:
         &controller::move_callback,
         this, std::placeholders::_1,
         std::placeholders::_2));
-
-
   }
 
 private:
