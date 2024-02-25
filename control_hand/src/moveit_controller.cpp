@@ -8,7 +8,6 @@
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 
-
 using namespace std::chrono_literals;
 static const std::string PLANNING_GROUP = "allegro_hand";
 
@@ -34,14 +33,13 @@ public:
 
 private:
   rclcpp::Service<control_hand::srv::SetJoints>::SharedPtr set_joints_srv;
-
-
   moveit::planning_interface::MoveGroupInterface move_group;
   rclcpp::TimerBase::SharedPtr timer;
   std::vector<double> joint_positions;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub;
 
   //service call takes in a vector of joint positions and moves the hand to that position
+  //THIS SETS THE JOINTS IN MOVEIT!
   void set_joints_callback(
     const std::shared_ptr<control_hand::srv::SetJoints::Request> request,
     std::shared_ptr<control_hand::srv::SetJoints::Response> response)
@@ -62,67 +60,57 @@ private:
     move_group.setMaxAccelerationScalingFactor(0.85);
     move_group.move();
     response->success = true;
+
+
   }
 
-  void joint_state_callback(const sensor_msgs::msg::JointState & js_msg)
+  // q_des[0] = msg.position[0];
+  // q_des[1] = msg.position[2];
+  // q_des[2] = msg.position[1];
+  void joint_state_callback(const sensor_msgs::msg::JointState & msg)
   {
-    // RCLCPP_INFO(this->get_logger(), "I heard: '%f'", msg.data.at(0));
-    joint_positions.resize(js_msg.position.size());
-    if (joint_positions.size() == 0) {
-      joint_positions.at(0) = js_msg.position[0];     // index twist
-      joint_positions.at(1) = js_msg.position[1];     // index spread
-      joint_positions.at(2) = js_msg.position[2];     // middle spread
-      joint_positions.at(3) = js_msg.position[3];     // ring spread
-      joint_positions.at(4) = js_msg.position[4];     // little spread
-      joint_positions.at(5) = js_msg.position[5];     // thumb spread
-      joint_positions.at(6) = js_msg.position[6];     // thumb abd
-      joint_positions.at(7) = js_msg.position[7];     // thumb prox
-      joint_positions.at(8) = js_msg.position[8];     // thumb med
-      joint_positions.at(9) = js_msg.position[9];     // thumb dist
-      joint_positions.at(10) = js_msg.position[10];   // index prox
-      joint_positions.at(11) = js_msg.position[11];   // index med
-      joint_positions.at(12) = js_msg.position[12];   // index dist
-      joint_positions.at(13) = js_msg.position[13];   // middle prox
-      joint_positions.at(14) = js_msg.position[14];   // middle med
-      joint_positions.at(15) = js_msg.position[15];   // middle dist
+    q_des[0] = msg.position[0];
+    q_des[1] = msg.position[2];
+    q_des[2] = msg.position[1];
+    q_des[3] = msg.position[10];
 
 
-    }
+    q_des[4] = msg.position[4];
+    q_des[5] = msg.position[12];
+
+
+    q_des[6] = msg.position[9];
+    q_des[7] = msg.position[5];
+
+
+    q_des[8] = msg.position[8];
+    q_des[9] = msg.position[6];
+    q_des[10] = msg.position[14];
+    q_des[11] = msg.position[3];
+    q_des[12] = msg.position[15];
+    q_des[13] = msg.position[11];
+    q_des[14] = msg.position[13];
+    q_des[15] = msg.position[7];
 
   }
 
 
   void timer_callback()
   {
-    //TODO
-
-    //after receiving joint states, move the hand to the joint positions
-
-    // void set_joints(std::vector<double> joint_positions)
-
-    //calll set_joints with joint_positions
-
-
-    // //log the joint positions
-    // RCLCPP_INFO_STREAM(
-    //   this->get_logger(), "Joint positions: " << joint_positions.at(
-    //     0) << " " << joint_positions.at(1) << " " << joint_positions.at(
-    //     2) << " " << joint_positions.at(3) << " " << joint_positions.at(
-    //     4) << " " << joint_positions.at(5) << " " << joint_positions.at(
-    //     6) << " " << joint_positions.at(7) << " " << joint_positions.at(
-    //     8) << " " << joint_positions.at(9) << " " << joint_positions.at(
-    //     10) << " " << joint_positions.at(11) << " " << joint_positions.at(
-    //     12) << " " << joint_positions.at(13) << " " << joint_positions.at(
-    //     14) << " " << joint_positions.at(15));
-
-    if (joint_positions.size() > 0) {
-      set_joints(joint_positions);
-      //log the joint positions
-      RCLCPP_INFO(this->get_logger(), "Joint positions: '%f'", joint_positions.at(0));
-      //sleep for 1 second
-      rclcpp::sleep_for(1s);
-    }
-
+    pBHand->SetMotionType(eMotionType_JOINT_PD);
+    double kp[] = {
+      500, 800, 900, 500,
+      500, 800, 900, 500,
+      500, 800, 900, 500,
+      1000, 700, 600, 600
+    };
+    double kd[] = {
+      25, 50, 55, 40,
+      25, 50, 55, 40,
+      25, 50, 55, 40,
+      50, 50, 50, 40
+    };
+    pBHand->SetGainsEx(kp, kd);
   }
 };
 
@@ -136,7 +124,6 @@ int main(int argc, char * argv[])
   memset(tau_des, 0, sizeof(tau_des));
   memset(cur_des, 0, sizeof(cur_des));
   curTime = 0.0;
-
 
   rclcpp::init(argc, argv);
   auto node = std::make_shared<MoveItPlanner>();
