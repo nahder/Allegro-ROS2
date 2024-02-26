@@ -56,33 +56,22 @@ private:
         this->get_logger(),
         "clamping to joint limits");
     }
-    move_group.setMaxVelocityScalingFactor(0.85);
-    move_group.setMaxAccelerationScalingFactor(0.85);
+    move_group.setMaxVelocityScalingFactor(1.0);
+    move_group.setMaxAccelerationScalingFactor(1.0);
     move_group.move();
     response->success = true;
-
-
   }
 
-  // q_des[0] = msg.position[0];
-  // q_des[1] = msg.position[2];
-  // q_des[2] = msg.position[1];
   void joint_state_callback(const sensor_msgs::msg::JointState & msg)
   {
     q_des[0] = msg.position[0];
     q_des[1] = msg.position[2];
     q_des[2] = msg.position[1];
     q_des[3] = msg.position[10];
-
-
     q_des[4] = msg.position[4];
     q_des[5] = msg.position[12];
-
-
     q_des[6] = msg.position[9];
     q_des[7] = msg.position[5];
-
-
     q_des[8] = msg.position[8];
     q_des[9] = msg.position[6];
     q_des[10] = msg.position[14];
@@ -91,7 +80,6 @@ private:
     q_des[13] = msg.position[11];
     q_des[14] = msg.position[13];
     q_des[15] = msg.position[7];
-
   }
 
 
