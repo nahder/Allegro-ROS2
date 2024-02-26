@@ -2,6 +2,9 @@
 #include "can_communicator.h"
 #include "RockScissorsPaper.h"
 
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/rclcpp.hpp"
+
 namespace allegro_hardware_interface
 {
 
@@ -26,11 +29,11 @@ hardware_interface::CallbackReturn AllegroHardware::on_init(
 hardware_interface::CallbackReturn AllegroHardware::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
+
   if (!OpenCAN()) {
     RCLCPP_ERROR(rclcpp::get_logger("AllegroHardware"), "Failed to open CAN communication.");
     return hardware_interface::CallbackReturn::ERROR;
   }
-
   CreateBHandAlgorithm();
   memset(&vars, 0, sizeof(vars));
   memset(q, 0, sizeof(q));
@@ -39,6 +42,11 @@ hardware_interface::CallbackReturn AllegroHardware::on_configure(
   memset(cur_des, 0, sizeof(cur_des));
   return hardware_interface::CallbackReturn::SUCCESS;
 }
+
+
+//q is the current state of the joints, q_des is the desired state of the joints
+// hw_states_ is updated with latest values from export_state_interfaces
+// hw_commands_ is updated with latest values from export_command_interfaces
 
 std::vector<hardware_interface::StateInterface> AllegroHardware::export_state_interfaces()
 {
@@ -62,22 +70,25 @@ std::vector<hardware_interface::CommandInterface> AllegroHardware::export_comman
   return command_interfaces;
 }
 
-
+// read current state from actuators
 hardware_interface::return_type AllegroHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  //TODO
-  // Update the joint state from the hardware
-  // Example: Read from CAN and update `q` array
+  for (uint i = 0; i < hw_states_.size(); i++) {
+    hw_states_[i] = q[i];
+  }
   return hardware_interface::return_type::OK;
 }
 
+
+// write current command values to actuators
+// hw_commands_ is updated with latest values from export_command_interfaces
 hardware_interface::return_type AllegroHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  //TODO
-  // Write the command to the hardware
-  // Example: Write desired positions `q_des` to the hardware via CAN
+  for (uint i = 0; i < hw_commands_.size(); i++) {
+    q_des[i] = hw_commands_[i];
+  }
   return hardware_interface::return_type::OK;
 }
 
@@ -89,10 +100,13 @@ hardware_interface::CallbackReturn AllegroHardware::on_cleanup(
   }
 
   DestroyBHandAlgorithm();
-
   RCLCPP_INFO(rclcpp::get_logger("AllegroHardware"), "Cleanup completed successfully.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 
-}
+} // namespace allegro_hardware_interface
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(
+  allegro_hardware_interface::AllegroHardware,
+  hardware_interface::SystemInterface)
