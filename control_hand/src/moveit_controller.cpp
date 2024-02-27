@@ -4,6 +4,9 @@
 #include "std_srvs/srv/trigger.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "control_hand/srv/set_joints.hpp"
+#include "control_hand/srv/set_config.hpp"
+
+
 #include <moveit/move_group_interface/move_group_interface.h>
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
@@ -23,6 +26,12 @@ public:
         &MoveItPlanner::set_joints_callback, this, std::placeholders::_1,
         std::placeholders::_2));
 
+    set_config_srv = create_service<control_hand::srv::SetConfig>(
+      "/set_config", std::bind(
+        &MoveItPlanner::set_config_callback, this, std::placeholders::_1,
+        std::placeholders::_2));
+
+
     joint_state_sub = create_subscription<sensor_msgs::msg::JointState>(
       "/joint_states", 10,
       std::bind(&MoveItPlanner::joint_state_callback, this, std::placeholders::_1));
@@ -33,6 +42,8 @@ public:
 
 private:
   rclcpp::Service<control_hand::srv::SetJoints>::SharedPtr set_joints_srv;
+  rclcpp::Service<control_hand::srv::SetConfig>::SharedPtr set_config_srv;
+
   moveit::planning_interface::MoveGroupInterface move_group;
   rclcpp::TimerBase::SharedPtr timer;
   std::vector<double> joint_positions;
@@ -66,7 +77,6 @@ private:
   {
     //msg.position is in the order as they are on joint_states topic
     //set q_des by msg.position names (joint_0...joint_15)
-
     q_des[0] = msg.position[0]; //joint_0
     q_des[1] = msg.position[2]; //joint_2
     q_des[2] = msg.position[1]; //joint_1
@@ -83,19 +93,25 @@ private:
     q_des[13] = msg.position[11]; //joint_11
     q_des[14] = msg.position[13]; //joint_13
     q_des[15] = msg.position[7]; //joint_7
-    RCLCPP_INFO(
-      this->get_logger(),
-      "q_des:\n"
-      "%f, %f, %f, %f,\n"
-      "%f, %f, %f, %f,\n"
-      "%f, %f, %f, %f,\n"
-      "%f, %f, %f, %f",
-      q_des[0], q_des[1], q_des[2], q_des[3],
-      q_des[4], q_des[5], q_des[6], q_des[7],
-      q_des[8], q_des[9], q_des[10], q_des[11],
-      q_des[12], q_des[13], q_des[14], q_des[15]);
   }
 
+  void set_config_callback(
+    const std::shared_ptr<control_hand::srv::SetConfig::Request> request,
+    std::shared_ptr<control_hand::srv::SetConfig::Response> response)
+  {
+    auto success = move_group.setNamedTarget(request->name);
+    if (!success) {
+      RCLCPP_WARN(
+        this->get_logger(),
+        "invalid joint configuration name, moving to default position");
+      move_group.setNamedTarget("Home");
+    }
+
+    move_group.setMaxVelocityScalingFactor(1.0);
+    move_group.setMaxAccelerationScalingFactor(1.0);
+    move_group.move();
+    response->success = true;
+  }
 
   void timer_callback()
   {
@@ -138,23 +154,23 @@ int main(int argc, char * argv[])
   return 0;
 }
 
-static double rock[] = {
-  -0.1194, //qdes[0]
-  1.2068, //qdes[1]
-  1.0, //qdes[2]
-  1.4042, //qdes[3]
-  -0.0093, //qdes[4]
-  1.2481, //qdes[5]
-  1.4073, //qdes[6]
-  0.8163, //qdes[7]
-  0.1116,   //qdes[8]
-  1.2712, //qdes[9]
-  1.3881, //qdes[10]
-  1.0122, //qdes[11]
-  0.6017, //qdes[12]
-  0.2976, //qdes[13]
-  0.9034, //qdes[14]
-  0.7929};  //qdes[15]
+// static double rock[] = {
+//   -0.1194, //qdes[0]
+//   1.2068, //qdes[1]
+//   1.0, //qdes[2]
+//   1.4042, //qdes[3]
+//   -0.0093, //qdes[4]
+//   1.2481, //qdes[5]
+//   1.4073, //qdes[6]
+//   0.8163, //qdes[7]
+//   0.1116,   //qdes[8]
+//   1.2712, //qdes[9]
+//   1.3881, //qdes[10]
+//   1.0122, //qdes[11]
+//   0.6017, //qdes[12]
+//   0.2976, //qdes[13]
+//   0.9034, //qdes[14]
+//   0.7929};  //qdes[15]
 
 // construct the msg.position vector from q_des using the earlier mapping
 

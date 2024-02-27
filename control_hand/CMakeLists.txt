@@ -45,6 +45,7 @@ target_include_directories(control_hand
 rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
 "srv/Move.srv"
 "srv/SetJoints.srv"
+"srv/SetConfig.srv"
 LIBRARY_NAME ${PROJECT_NAME}
 )
 
