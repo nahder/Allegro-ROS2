@@ -75,7 +75,7 @@
         <link name="link_11_tip"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="Home" group="allegro_hand">
+   <group_state name="Home" group="allegro_hand">
         <joint name="joint_0" value="0"/>
         <joint name="joint_1" value="0"/>
         <joint name="joint_10" value="0"/>
@@ -94,58 +94,58 @@
         <joint name="joint_9" value="0"/>
     </group_state>
     <group_state name="paper" group="allegro_hand">
-        <joint name="joint_0" value="-0.122"/>
-        <joint name="joint_1" value="0.4"/>
-        <joint name="joint_10" value="0.6"/>
-        <joint name="joint_11" value="-0528"/>
-        <joint name="joint_12" value="0.5284"/>
-        <joint name="joint_13" value="0.3693"/>
-        <joint name="joint_14" value="0.8977"/>
-        <joint name="joint_15" value="0.4863"/>
-        <joint name="joint_2" value="0.6"/>
-        <joint name="joint_3" value="-07"/>
-        <joint name="joint_4" value="0312"/>
-        <joint name="joint_5" value="0.4"/>
-        <joint name="joint_6" value="0.6"/>
-        <joint name="joint_7" value="0"/>
-        <joint name="joint_8" value="0.1767"/>
-        <joint name="joint_9" value="0.4"/>
+        <joint name="joint_0" value="0.0441"/>
+        <joint name="joint_1" value="-0.1959"/>
+        <joint name="joint_10" value="0.312"/>
+        <joint name="joint_11" value="-0.227"/>
+        <joint name="joint_12" value="0.263"/>
+        <joint name="joint_13" value="-0.1049"/>
+        <joint name="joint_14" value="1.2896"/>
+        <joint name="joint_15" value="0.2641"/>
+        <joint name="joint_2" value="0.315"/>
+        <joint name="joint_3" value="0.1501"/>
+        <joint name="joint_4" value="0.0701"/>
+        <joint name="joint_5" value="0.0236"/>
+        <joint name="joint_6" value="0.0237"/>
+        <joint name="joint_7" value="-0.0028"/>
+        <joint name="joint_8" value="0.0234"/>
+        <joint name="joint_9" value="-0.0363"/>
     </group_state>
     <group_state name="rock" group="allegro_hand">
-        <joint name="joint_0" value="-0.1194"/>
-        <joint name="joint_1" value="1.2068"/>
-        <joint name="joint_10" value="1.3881"/>
-        <joint name="joint_11" value="1122"/>
-        <joint name="joint_12" value="0.6017"/>
-        <joint name="joint_13" value="0.2976"/>
-        <joint name="joint_14" value="0.9034"/>
-        <joint name="joint_15" value="0.7929"/>
-        <joint name="joint_2" value="1"/>
-        <joint name="joint_3" value="1.4042"/>
-        <joint name="joint_4" value="-0093"/>
-        <joint name="joint_5" value="1.2481"/>
+        <joint name="joint_0" value="0.1065"/>
+        <joint name="joint_1" value="1.6099"/>
+        <joint name="joint_10" value="1.2929"/>
+        <joint name="joint_11" value="1.6179"/>
+        <joint name="joint_12" value="0.263"/>
+        <joint name="joint_13" value="0.2765"/>
+        <joint name="joint_14" value="0.6599"/>
+        <joint name="joint_15" value="0.7629"/>
+        <joint name="joint_2" value="1.1264"/>
+        <joint name="joint_3" value="1.4752"/>
+        <joint name="joint_4" value="0.1117"/>
+        <joint name="joint_5" value="1.6099"/>
         <joint name="joint_6" value="1.4073"/>
-        <joint name="joint_7" value="0.8163"/>
+        <joint name="joint_7" value="1.4242"/>
         <joint name="joint_8" value="0.1116"/>
-        <joint name="joint_9" value="1.2712"/>
+        <joint name="joint_9" value="1.6099"/>
     </group_state>
     <group_state name="scissors" group="allegro_hand">
-        <joint name="joint_0" value="0885"/>
-        <joint name="joint_1" value="0.4"/>
-        <joint name="joint_10" value="1.1346"/>
-        <joint name="joint_11" value="1244"/>
-        <joint name="joint_12" value="1"/>
-        <joint name="joint_13" value="0.6331"/>
-        <joint name="joint_14" value="1.3509"/>
+        <joint name="joint_0" value="-0.47"/>
+        <joint name="joint_1" value="0.3728"/>
+        <joint name="joint_10" value="1.3033"/>
+        <joint name="joint_11" value="0.2011"/>
+        <joint name="joint_12" value="0.9452"/>
+        <joint name="joint_13" value="0.6586"/>
+        <joint name="joint_14" value="0.8643"/>
         <joint name="joint_15" value="1"/>
-        <joint name="joint_2" value="0.6"/>
-        <joint name="joint_3" value="-0769"/>
-        <joint name="joint_4" value="0312"/>
-        <joint name="joint_5" value="0.4"/>
-        <joint name="joint_6" value="0.6"/>
-        <joint name="joint_7" value="0"/>
-        <joint name="joint_8" value="0.1019"/>
-        <joint name="joint_9" value="1.2375"/>
+        <joint name="joint_2" value="0.7935"/>
+        <joint name="joint_3" value="0.5477"/>
+        <joint name="joint_4" value="-0.47"/>
+        <joint name="joint_5" value="0.703"/>
+        <joint name="joint_6" value="0.7831"/>
+        <joint name="joint_7" value="-0.016"/>
+        <joint name="joint_8" value="-0.4388"/>
+        <joint name="joint_9" value="1.2348"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="index_tip" parent_link="link_3" group="index_tip" parent_group="allegro_hand"/>
