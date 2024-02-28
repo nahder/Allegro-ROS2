@@ -2,15 +2,17 @@ import rclpy
 from rclpy.node import Node
 import mediapipe as mp
 import cv2
-import numpy as np
+from std_msgs.msg import String
+
 # TODO: ENSURE THIS IS IMPORTED PROPERLY INTO SITE-PACKAGES
 from .submodules.model import KeyPointClassifier
 from .utils import calc_landmark_list, pre_process_landmark
 
+
 class GestureClassifier(Node):
 
     def __init__(self):
-        super().__init__('gesture_classifier')
+        super().__init__("gesture_classifier")
 
         self.kpclf = KeyPointClassifier()
         self.gestures = {
@@ -26,14 +28,18 @@ class GestureClassifier(Node):
         self.hands = self.mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=0.5,
-            min_tracking_confidence=0.5)
+            min_tracking_confidence=0.5,
+        )
 
-        self.timer = self.create_timer(0.1, self.timer_cb)
+        self.timer = self.create_timer(0.02, self.timer_cb)
+
+        # create publisher of geture to /gesture topic
+        self.gesture_pub = self.create_publisher(String, "gesture", 10)
 
     def timer_cb(self):
         success, image = self.cap.read()
         if not success:
-            self.get_logger().error('Ignoring empty camera frame.')
+            self.get_logger().error("Ignoring empty camera frame.")
             return
 
         # Process the image
@@ -56,20 +62,24 @@ class GestureClassifier(Node):
                     hand_landmarks,
                     self.mp_hands.HAND_CONNECTIONS,
                     self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                    self.mp_drawing_styles.get_default_hand_connections_style())
+                    self.mp_drawing_styles.get_default_hand_connections_style(),
+                )
 
         # Handle gesture recognition result
         if gesture_index in self.gestures:
-            self.get_logger().info(f'Gesture detected: {self.gestures[gesture_index]}')
+            gesture = String()
+            gesture.data = self.gestures[gesture_index]
+            self.gesture_pub.publish(gesture)
         else:
-            self.get_logger().info('No gesture detected')
+            self.get_logger().info("No gesture detected")
 
         # If you need to display the image, uncomment the following lines:
         final_image = cv2.flip(image, 1)
-        cv2.imshow('MediaPipe Hands', final_image)
+        cv2.imshow("MediaPipe Hands", final_image)
         if cv2.waitKey(5) & 0xFF == 27:
             self.cap.release()
             rclpy.shutdown()
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -79,5 +89,6 @@ def main(args=None):
     cv2.destroyAllWindows()  # Close any OpenCV windows
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
