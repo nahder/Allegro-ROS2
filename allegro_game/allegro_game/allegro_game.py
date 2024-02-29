@@ -15,11 +15,12 @@ class AllegroGame(Node):
     def __init__(self):
         super().__init__("allegro_game")
 
+        self.round_logger = ResetLogger(self.get_logger().info)
         self.cbgroup1 = MutuallyExclusiveCallbackGroup()
         self.cbgroup2 = MutuallyExclusiveCallbackGroup()
 
         # self.defined_gestures = ["rock", "scissors", "3claw"]
-        self.defined_gestures = ["rock", "scissors", "3claw"]
+        self.defined_gestures = ["rock", "scissors"]
 
         self.gesture_sub = self.create_subscription(
             String, "/gesture", self.player_gesture_cb, 10, callback_group=self.cbgroup1
@@ -48,9 +49,12 @@ class AllegroGame(Node):
         self.play_round = True
 
     # perform as many gestures as the round number
+    # want to generate #round indices which are indexable to defined_gestures
+
     def perform_gestures(self):
         request = SetConfig.Request()
-        indexes = random.sample(range(self.round), self.round)
+        num_gestures = min(self.round, len(self.defined_gestures))
+        indexes = random.sample(range(len(self.defined_gestures)), num_gestures)
 
         for index in indexes:
             request.name = self.defined_gestures[index]
@@ -65,15 +69,18 @@ class AllegroGame(Node):
             self.stability_count = 0
 
     def game_loop(self):
-        if self.play_round and self.round < 4:
+        if self.play_round and self.round < 6:
+            self.round_logger.reset()
+            self.round_logger.log("Round: %d" % self.round)
             self.perform_gestures()
-            self.get_logger().info("robot gestures: %s" % self.performed_gestures)
+            self.round_logger.log("robot gestures: %s" % self.performed_gestures)
             self.sampling_count = 0  # begins accumulating player gestures
             self.play_round = False
 
     def accumulate_player_gestures(self):
         if self.sampling_count < 100:  # accumulating for 5 seconds
-            self.get_logger().info("Start copying the robot's gestures!", once=True)
+            if self.sampling_count == 0:
+                self.round_logger.log("Start copying the robot's gestures!")
 
             if self.cur_player_gesture != self.prev_player_gesture:
                 self.player_gestures.append(self.cur_player_gesture)
@@ -81,22 +88,35 @@ class AllegroGame(Node):
 
             self.sampling_count += 1
         else:  # 5 seconds have passed
-            self.get_logger().info(
-                "player gestures: %s" % self.player_gestures, once=True
-            )
+            self.round_logger.log("player gestures: %s" % self.player_gestures)
 
             if self.performed_gestures == self.player_gestures:
                 self.round += 1
                 self.play_round = True
                 self.player_gestures = []
                 self.prev_player_gesture = None
-                self.get_logger().info("You did it! Next round!", once=True)
+                self.round_logger.log("You did it! Next round!")
             else:
+                # TODO: call the nonono sequence
                 self.round = 1
                 self.play_round = True
                 self.player_gestures = []
                 self.prev_player_gesture = None
-                self.get_logger().info("You failed! Restarting...!", once=True)
+                self.round_logger.log("You failed! Restarting...!")
+
+
+class ResetLogger:
+    def __init__(self, logger_func):
+        self.logger_func = logger_func
+        self.logged_set = set()
+
+    def log(self, msg):
+        if msg not in self.logged_set:
+            self.logged_set.add(msg)
+            self.logger_func(msg)
+
+    def reset(self):
+        self.logged_set.clear()
 
 
 def main(args=None):
@@ -105,30 +125,3 @@ def main(args=None):
     rclpy.spin(allegro_game)
     allegro_game.destroy_node()
     rclpy.shutdown()
-
-
-# game starts with issuing one gesture to the hand
-# then, give the player 3 seconds to do the same gesture...read from the gesture topic
-
-# if the player does not do the same gesture, the robot will do a "no no no" gesture and the game will reset
-
-# if the player does the same gesture, the robot will do a "yes" gesture and the game will continue
-
-# after 3 seconds, round will be incremented, and the robot will generate #round number of gestures
-
-
-# algorithm which, knowing the correct sequence of gestures, will wait for the player to do the same sequence of gestures
-# after the player has done the same sequence of gestures, the robot will do a "yes" gesture and the game will continue
-
-
-# TO DO:
-# 1. perform a sequence of gestures
-# 2. perform gestures, give the player 3 seconds to do the same,
-# if the player did the same,
-
-# x. retrain mediapipe to be tight on rock, paper, scissors, and claw
-
-# def delay(self):
-#     self.future = self.delay_client.call_async(Empty.Request())
-#     rclpy.spin_until_future_complete(self, self.future)
-#     return self.future.result()
