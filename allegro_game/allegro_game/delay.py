@@ -11,7 +11,7 @@ class Delay(Node):
         self.delay_service = self.create_service(Empty, 'delay', self.delay_cb)
         
     def delay_cb(self, request, response):
-        time.sleep(1.0) 
+        time.sleep(0.2) 
         return response 
         
     #MAKE A DELAY SERVICE WITH TIME.SLEEP IN IT AND THEN AWAIT THAT SERVICE 

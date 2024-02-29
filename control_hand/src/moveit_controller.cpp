@@ -25,18 +25,47 @@ static double nonono2[] = {  //jt 5,9
   0.263, 0.410, 0.911, 1.5
 };
 
+// double kp[] = {
+//   500, 800, 900, 500,
+//   500, 800, 900, 500,
+//   500, 800, 900, 500,
+//   1000, 700, 600, 600
+// };
+// double kd[] = {
+//   25, 50, 55, 40,
+//   25, 50, 55, 40,
+//   25, 50, 55, 40,
+//   50, 50, 50, 40
+// };
+
 double kp[] = {
   500, 800, 900, 500,
   500, 800, 900, 500,
   500, 800, 900, 500,
   1000, 700, 600, 600
 };
+
+//scale kp down by half
+// double kp[] = {
+//   250, 400, 450, 250,
+//   250, 400, 450, 250,
+//   250, 400, 450, 250,
+//   500, 350, 300, 300
+// };
+
 double kd[] = {
   25, 50, 55, 40,
   25, 50, 55, 40,
   25, 50, 55, 40,
   50, 50, 50, 40
 };
+
+// double kd[] = {
+//   12.5, 25, 27.5, 20,
+//   12.5, 25, 27.5, 20,
+//   12.5, 25, 27.5, 20,
+//   25, 25, 25, 20
+// };
 
 using namespace std::chrono_literals;
 static const std::string PLANNING_GROUP = "allegro_hand";
@@ -125,6 +154,7 @@ private:
     const std::shared_ptr<control_hand::srv::SetConfig::Request> request,
     std::shared_ptr<control_hand::srv::SetConfig::Response> response)
   {
+    RCLCPP_INFO(this->get_logger(), "request: %s", request->name.c_str());
     if (request->name == "nonono") {
       move_group.setNamedTarget("Home");
       move_group.setMaxVelocityScalingFactor(1.0);
@@ -180,7 +210,7 @@ private:
 int main(int argc, char * argv[])
 {
   CreateBHandAlgorithm();
-  OpenCAN();
+  // OpenCAN();
   memset(&vars, 0, sizeof(vars));
   memset(q, 0, sizeof(q));
   memset(q_des, 0, sizeof(q_des));
@@ -193,7 +223,7 @@ int main(int argc, char * argv[])
   rclcpp::spin(node);
   rclcpp::shutdown();
 
-  CloseCAN();
+  // CloseCAN();
   DestroyBHandAlgorithm();
   return 0;
 }

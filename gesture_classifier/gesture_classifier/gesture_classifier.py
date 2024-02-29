@@ -65,13 +65,13 @@ class GestureClassifier(Node):
                     self.mp_drawing_styles.get_default_hand_connections_style(),
                 )
 
-        # Handle gesture recognition result
-        if gesture_index in self.gestures:
-            gesture = String()
-            gesture.data = self.gestures[gesture_index]
-            self.gesture_pub.publish(gesture)
-        else:
-            self.get_logger().info("No gesture detected")
+                # Handle gesture recognition result
+                if gesture_index in self.gestures:
+                    gesture = String()
+                    gesture.data = self.gestures[gesture_index]
+                    self.gesture_pub.publish(gesture)
+                else:
+                    self.get_logger().info("No gesture detected")
 
         # If you need to display the image, uncomment the following lines:
         final_image = cv2.flip(image, 1)
