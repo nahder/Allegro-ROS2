@@ -150,6 +150,7 @@ private:
     pBHand->SetGainsEx(kp, kd);
   }
 
+
   void set_config_callback(
     const std::shared_ptr<control_hand::srv::SetConfig::Request> request,
     std::shared_ptr<control_hand::srv::SetConfig::Response> response)

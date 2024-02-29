@@ -18,7 +18,9 @@ class AllegroGame(Node):
         self.cbgroup1 = MutuallyExclusiveCallbackGroup()
         self.cbgroup2 = MutuallyExclusiveCallbackGroup()
 
-        self.defined_gestures = ["paper", "rock", "scissors", "okay", "3claw"]
+        # self.defined_gestures = ["rock", "scissors", "3claw"]
+        self.defined_gestures = ["rock", "scissors", "3claw"]
+
         self.gesture_sub = self.create_subscription(
             String, "/gesture", self.player_gesture_cb, 10, callback_group=self.cbgroup1
         )
@@ -39,9 +41,10 @@ class AllegroGame(Node):
 
         self.player_gestures = []
         self.performed_gestures = []
-        self.round = 2
+        self.round = 1
 
         self.sampling_count = 0
+        self.stability_count = 0
         self.play_round = True
 
     # perform as many gestures as the round number
@@ -56,37 +59,44 @@ class AllegroGame(Node):
         self.performed_gestures = [self.defined_gestures[i] for i in indexes]
 
     def player_gesture_cb(self, msg):
-        self.cur_player_gesture = msg.data
+        self.stability_count += 1
+        if self.stability_count > 25:
+            self.cur_player_gesture = msg.data
+            self.stability_count = 0
 
     def game_loop(self):
-        if self.play_round:
+        if self.play_round and self.round < 4:
             self.perform_gestures()
             self.get_logger().info("robot gestures: %s" % self.performed_gestures)
-            self.get_logger().info("Start copying the robot gestures!")
             self.sampling_count = 0  # begins accumulating player gestures
             self.play_round = False
 
-    # can start sampling by setting sampling_count to 0
-    # TODO: improve stability; sometimes rock at first will add scissors then rock
     def accumulate_player_gestures(self):
-        if self.sampling_count < 100:
-            start_time = self.get_clock().now().to_msg()
-            start_time = start_time.sec + start_time.nanosec * 1e-9
-            cur_time = 0.0
-            cur_time = self.get_clock().now().to_msg()
-            cur_time = cur_time.sec + cur_time.nanosec * 1e-9
+        if self.sampling_count < 100:  # accumulating for 5 seconds
+            self.get_logger().info("Start copying the robot's gestures!", once=True)
 
             if self.cur_player_gesture != self.prev_player_gesture:
-                # self.get_logger().info("adding gesture: %s" % self.cur_player_gesture)
                 self.player_gestures.append(self.cur_player_gesture)
                 self.prev_player_gesture = self.cur_player_gesture
 
-            # print("player gestures", self.player_gestures)
             self.sampling_count += 1
-        else:
+        else:  # 5 seconds have passed
             self.get_logger().info(
                 "player gestures: %s" % self.player_gestures, once=True
             )
+
+            if self.performed_gestures == self.player_gestures:
+                self.round += 1
+                self.play_round = True
+                self.player_gestures = []
+                self.prev_player_gesture = None
+                self.get_logger().info("You did it! Next round!", once=True)
+            else:
+                self.round = 1
+                self.play_round = True
+                self.player_gestures = []
+                self.prev_player_gesture = None
+                self.get_logger().info("You failed! Restarting...!", once=True)
 
 
 def main(args=None):

@@ -1,8 +1,5 @@
 <launch> 
 
-    <node pkg="control_hand" exec="moveit_controller" name="moveit_controller"
-        output="screen" />
-
     <node pkg="gesture_classifier" exec="gesture_classifier" name="gesture_classifier"
         output="screen" />
 
