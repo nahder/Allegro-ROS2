@@ -39,7 +39,7 @@ class AllegroGame(Node):
 
         self.player_gestures = []
         self.performed_gestures = []
-        self.round = 1
+        self.round = 2
 
         self.sampling_count = 0
         self.play_round = True
@@ -61,8 +61,9 @@ class AllegroGame(Node):
     def game_loop(self):
         if self.play_round:
             self.perform_gestures()
-            self.sampling_count = 0  # begins accumulating player gestures
             self.get_logger().info("robot gestures: %s" % self.performed_gestures)
+            self.get_logger().info("Start copying the robot gestures!")
+            self.sampling_count = 0  # begins accumulating player gestures
             self.play_round = False
 
     # can start sampling by setting sampling_count to 0
