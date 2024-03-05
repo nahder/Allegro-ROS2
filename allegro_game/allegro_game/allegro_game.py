@@ -20,6 +20,7 @@ class AllegroGame(Node):
         self.cbgroup2 = MutuallyExclusiveCallbackGroup()
 
         # self.defined_gestures = ["rock", "scissors", "3claw"]
+
         self.defined_gestures = ["rock", "scissors"]
 
         self.gesture_sub = self.create_subscription(
@@ -64,45 +65,53 @@ class AllegroGame(Node):
 
     def player_gesture_cb(self, msg):
         self.stability_count += 1
-        if self.stability_count > 25:
+        if self.stability_count > 20:
             self.cur_player_gesture = msg.data
             self.stability_count = 0
 
     def game_loop(self):
-        if self.play_round and self.round < 6:
+        if self.play_round and self.round < 3:
             self.round_logger.reset()
             self.round_logger.log("Round: %d" % self.round)
+            self.player_gestures = []
+            self.prev_player_gesture = None
             self.perform_gestures()
             self.round_logger.log("robot gestures: %s" % self.performed_gestures)
             self.sampling_count = 0  # begins accumulating player gestures
             self.play_round = False
 
     def accumulate_player_gestures(self):
-        if self.sampling_count < 100:  # accumulating for 5 seconds
-            if self.sampling_count == 0:
-                self.round_logger.log("Start copying the robot's gestures!")
+        if self.sampling_count < 120:  # accumulating for 5 seconds
+            self.round_logger.log("Start copying the robot's gestures!")
 
             if self.cur_player_gesture != self.prev_player_gesture:
                 self.player_gestures.append(self.cur_player_gesture)
                 self.prev_player_gesture = self.cur_player_gesture
 
             self.sampling_count += 1
+
         else:  # 5 seconds have passed
             self.round_logger.log("player gestures: %s" % self.player_gestures)
 
             if self.performed_gestures == self.player_gestures:
                 self.round += 1
                 self.play_round = True
-                self.player_gestures = []
                 self.prev_player_gesture = None
                 self.round_logger.log("You did it! Next round!")
+                self.player_gestures = []
+
             else:
-                # TODO: call the nonono sequence
+                request = SetConfig.Request()
+                request.name = "nonono"
+                self.set_config_srv.call_async(request)
+                self.round_logger.reset()
                 self.round = 1
                 self.play_round = True
+                self.round_logger.log("You failed!")
+                self.round_logger.log("robot gestures: %s" % self.performed_gestures)
+                self.round_logger.log("player gestures: %s" % self.player_gestures)
+                self.round_logger.log("Restarting...")
                 self.player_gestures = []
-                self.prev_player_gesture = None
-                self.round_logger.log("You failed! Restarting...!")
 
 
 class ResetLogger:
