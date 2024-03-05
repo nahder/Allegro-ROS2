@@ -36,6 +36,8 @@ class GestureClassifier(Node):
         # create publisher of geture to /gesture topic
         self.gesture_pub = self.create_publisher(String, "gesture", 10)
 
+        self.label = None
+
     def timer_cb(self):
         success, image = self.cap.read()
         if not success:
@@ -70,11 +72,23 @@ class GestureClassifier(Node):
                     gesture = String()
                     gesture.data = self.gestures[gesture_index]
                     self.gesture_pub.publish(gesture)
+                    self.label = self.gestures[gesture_index]
+
                 else:
                     self.get_logger().info("No gesture detected")
 
         # If you need to display the image, uncomment the following lines:
         final_image = cv2.flip(image, 1)
+        final_image = cv2.putText(
+            final_image,
+            self.label,
+            (50, 50),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 0, 255),
+            2,
+            cv2.LINE_AA,
+        )
         cv2.imshow("MediaPipe Hands", final_image)
         if cv2.waitKey(5) & 0xFF == 27:
             self.cap.release()
@@ -89,6 +103,14 @@ def main(args=None):
     cv2.destroyAllWindows()  # Close any OpenCV windows
     rclpy.shutdown()
 
+
+# goal: want to make it more clear when the game is collecting player gestures
+
+# lets make a gui for the game
+
+# we can use the tkinter library to make a gui for the game
+
+# it will indicate to the player
 
 if __name__ == "__main__":
     main()
