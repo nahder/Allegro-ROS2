@@ -294,22 +294,18 @@ void MainLoop()
 void ComputeTorque()
 {
   if (!pBHand) {return;}
-  pBHand->SetJointPosition(q);   // tell BHand library the current joint positions
+  pBHand->SetJointPosition(q);     // Tell BHand library the current joint positions.
   pBHand->SetJointDesiredPosition(q_des);
   pBHand->UpdateControl(0);
   pBHand->GetJointTorque(tau_des);
 
-//    static int j_active[] = {
-//        0, 0, 0, 0,
-//        0, 0, 0, 0,
-//        0, 0, 0, 0,
-//        1, 1, 1, 1
-//    };
-//    for (int i=0; i<MAX_DOF; i++) {
-//        if (j_active[i] == 0) {
-//            tau_des[i] = 0;
-//        }
-//    }
+  // Directly use the provided zero-based indices for the broken finger joints
+  // int broken_joints[] = {8, 6, 3, 13};   // Use as is, assuming zero-based indexing as per your correction.
+  int broken_joints[] = {9};    // Use as is, assuming zero-based indexing as per your correction.
+  // Set desired torque for broken finger joints to zero.
+  for (int idx : broken_joints) {
+    tau_des[idx] = 0.0;
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
