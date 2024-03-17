@@ -19,6 +19,7 @@ class GestureClassifier(Node):
             1: "rock",
             2: "paper",
             3: "scissors",
+            4: "L",
         }
 
         self.mp_drawing = mp.solutions.drawing_utils
