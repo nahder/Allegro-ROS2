@@ -19,9 +19,7 @@ class AllegroGame(Node):
         self.cbgroup1 = MutuallyExclusiveCallbackGroup()
         self.cbgroup2 = MutuallyExclusiveCallbackGroup()
 
-        # self.defined_gestures = ["rock", "scissors", "3claw"]
-
-        self.defined_gestures = ["rock", "scissors"]
+        self.defined_gestures = ["rock", "scissors", "L"]
 
         self.gesture_sub = self.create_subscription(
             String, "/gesture", self.player_gesture_cb, 10, callback_group=self.cbgroup1
@@ -54,14 +52,25 @@ class AllegroGame(Node):
 
     def perform_gestures(self):
         request = SetConfig.Request()
-        num_gestures = min(self.round, len(self.defined_gestures))
-        indexes = random.sample(range(len(self.defined_gestures)), num_gestures)
+        self.performed_gestures = []
+        last_gesture_index = None
 
-        for index in indexes:
-            request.name = self.defined_gestures[index]
+        for _ in range(self.round):
+            # Generate a list of possible next gestures (exclude the last gesture to avoid immediate repetition)
+            possible_next_gestures = [
+                i for i in range(len(self.defined_gestures)) if i != last_gesture_index
+            ]
+
+            # Randomly select the next gesture from the possible next gestures
+            next_gesture_index = random.choice(possible_next_gestures)
+
+            # Prepare and send the request for the next gesture
+            request.name = self.defined_gestures[next_gesture_index]
             self.set_config_srv.call_async(request)
 
-        self.performed_gestures = [self.defined_gestures[i] for i in indexes]
+            # Update the performed gestures list and the last gesture index
+            self.performed_gestures.append(self.defined_gestures[next_gesture_index])
+            last_gesture_index = next_gesture_index
 
     # maybe make a diff timer that sets the robot's gestures so
     # that we can control how often its updated (this is just the gesture publishing timer)
@@ -75,7 +84,7 @@ class AllegroGame(Node):
             self.stability_count = 0
 
     def game_loop(self):
-        if self.play_round and self.round < 5:
+        if self.play_round and self.round < 10:
             self.round_logger.reset()
             self.round_logger.log("Round: %d" % self.round)
             self.player_gestures = []
