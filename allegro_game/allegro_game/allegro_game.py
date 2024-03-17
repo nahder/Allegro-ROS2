@@ -85,15 +85,10 @@ class AllegroGame(Node):
             self.round_logger.log("robot gestures: %s" % self.performed_gestures)
             self.sampling_count = 0  # begins accumulating player gestures
             self.play_round = False
+            self.round += 1
 
     def accumulate_player_gestures(self):
-        # accumulate player_gestures called every 0.05s
-        # to wait for 5 seconds, we need 100 calls
-        # to wait for 10 seconds, we need 200 calls
-        # 400 counts = 20 seconds
-        # 300 counts = 15 seconds
-        # 500 counts = 25 seconds
-        # i dont think these count to seconds are accurate
+
         if self.sampling_count < 500:
             self.round_logger.log("Start copying the robot's gestures!")
 
@@ -102,31 +97,23 @@ class AllegroGame(Node):
                 self.round_logger.log("Added gesture: %s" % self.cur_player_gesture)
                 self.prev_player_gesture = self.cur_player_gesture
 
-            self.sampling_count += 1
-
-        # change this so that once the player is recognized to have all the gestures
-        # in the sequence, the game will move on to the next round
-
-        else:  # 5 seconds have passed
-            self.round_logger.log("player gestures: %s" % self.player_gestures)
-
-            # if the player's gestures match the robot's gestures
-            if self.performed_gestures == self.player_gestures:
-                self.round += 1
+            if self.player_gestures == self.performed_gestures:
                 self.round_logger.log("You did it! Next round!")
                 self.play_round = True
 
-            # otherwise, nonono and then reset the game
-            else:
-                request = SetConfig.Request()
-                request.name = "nonono"
-                self.set_config_srv.call_async(request)
-                self.round = 1
-                self.round_logger.log("You failed!")
-                self.round_logger.log("robot gestures: %s" % self.performed_gestures)
-                self.round_logger.log("player gestures: %s" % self.player_gestures)
-                self.round_logger.log("Restarting...")
-                self.play_round = True
+            self.sampling_count += 1
+
+        else:  # 5 seconds have passed
+            self.round_logger.log("player gestures: %s" % self.player_gestures)
+            request = SetConfig.Request()
+            request.name = "nonono"
+            self.set_config_srv.call_async(request)
+            self.round = 1
+            self.round_logger.log("You failed!")
+            self.round_logger.log("robot gestures: %s" % self.performed_gestures)
+            self.round_logger.log("player gestures: %s" % self.player_gestures)
+            self.round_logger.log("Restarting...")
+            self.play_round = True
 
 
 class ResetLogger:
