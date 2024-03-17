@@ -299,10 +299,9 @@ void ComputeTorque()
   pBHand->UpdateControl(0);
   pBHand->GetJointTorque(tau_des);
 
-  // Directly use the provided zero-based indices for the broken finger joints
-  // int broken_joints[] = {8, 6, 3, 13};   // Use as is, assuming zero-based indexing as per your correction.
-  int broken_joints[] = {9};    // Use as is, assuming zero-based indexing as per your correction.
-  // Set desired torque for broken finger joints to zero.
+  // int broken_joints[] = {8, 6, 3, 13};
+  int broken_joints[] = {9};
+  // set desired torque for broken finger joints to zero.
   for (int idx : broken_joints) {
     tau_des[idx] = 0.0;
   }

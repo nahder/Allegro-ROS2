@@ -97,14 +97,16 @@ class AllegroGame(Node):
             self.round += 1
 
     def accumulate_player_gestures(self):
-
         if self.sampling_count < 100 * self.round:
             self.round_logger.log("Start copying the robot's gestures!")
 
             if self.cur_player_gesture != self.prev_player_gesture:
-                self.player_gestures.append(self.cur_player_gesture)
-                self.round_logger.log("Added gesture: %s" % self.cur_player_gesture)
-                self.prev_player_gesture = self.cur_player_gesture
+                if self.round_logger.log("Added gesture: %s" % self.cur_player_gesture):
+                    # Gesture successfully logged, add it to the player_gestures list
+                    self.player_gestures.append(self.cur_player_gesture)
+                    self.prev_player_gesture = self.cur_player_gesture
+                    # Reset the logger to allow this gesture to be logged again in this round (if not in immediate succession)
+                    self.round_logger.reset()
 
             if self.player_gestures == self.performed_gestures:
                 self.round_logger.log("You did it! Next round!")
@@ -112,17 +114,20 @@ class AllegroGame(Node):
 
             self.sampling_count += 1
 
-        else:
-            self.round_logger.log("player gestures: %s" % self.player_gestures)
-            request = SetConfig.Request()
-            request.name = "nonono"
-            self.set_config_srv.call_async(request)
-            self.round = 1
-            self.round_logger.log("You failed!")
-            self.round_logger.log("robot gestures: %s" % self.performed_gestures)
-            self.round_logger.log("player gestures: %s" % self.player_gestures)
-            self.round_logger.log("Restarting...")
-            self.play_round = True
+        else:  # Time's up for the current round
+            self.handle_round_completion()
+
+    def handle_round_completion(self):
+        self.round_logger.log("player gestures: %s" % self.player_gestures)
+        request = SetConfig.Request()
+        request.name = "nonono"
+        self.set_config_srv.call_async(request)
+        self.round = 1
+        self.round_logger.log("You failed!")
+        self.round_logger.log("robot gestures: %s" % self.performed_gestures)
+        self.round_logger.log("player gestures: %s" % self.player_gestures)
+        self.round_logger.log("Restarting...")
+        self.play_round = True
 
 
 class ResetLogger:
@@ -134,6 +139,8 @@ class ResetLogger:
         if msg not in self.logged_set:
             self.logged_set.add(msg)
             self.logger_func(msg)
+            return True  # Indicate that logging occurred
+        return False  # Indicate no logging occurred due to duplication
 
     def reset(self):
         self.logged_set.clear()
@@ -145,6 +152,3 @@ def main(args=None):
     rclpy.spin(allegro_game)
     allegro_game.destroy_node()
     rclpy.shutdown()
-
-
-# need to add some indication as to when the player has completed 1 gesture out of the sequence

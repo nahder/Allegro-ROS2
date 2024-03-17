@@ -183,6 +183,24 @@
         <joint name="joint_8" value="-0.0985"/>
         <joint name="joint_9" value="1.6099"/>
     </group_state>
+    <group_state name="pinch" group="allegro_hand">
+        <joint name="joint_0" value="0.1169"/>
+        <joint name="joint_1" value="1.6099"/>
+        <joint name="joint_10" value="1.709"/>
+        <joint name="joint_11" value="-0.1658"/>
+        <joint name="joint_12" value="1.1768"/>
+        <joint name="joint_13" value="0.4695"/>
+        <joint name="joint_14" value="0.6415"/>
+        <joint name="joint_15" value="0.2433"/>
+        <joint name="joint_2" value="-0.0492"/>
+        <joint name="joint_3" value="0.1909"/>
+        <joint name="joint_4" value="0.2103"/>
+        <joint name="joint_5" value="1.6099"/>
+        <joint name="joint_6" value="0.0341"/>
+        <joint name="joint_7" value="0.0176"/>
+        <joint name="joint_8" value="-0.0805"/>
+        <joint name="joint_9" value="1.6099"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="index_tip" parent_link="link_3" group="index_tip" parent_group="allegro_hand"/>
     <end_effector name="thumb_tip" parent_link="link_15" group="thumb_tip" parent_group="allegro_hand"/>
