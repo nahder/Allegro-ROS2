@@ -7,10 +7,12 @@ setup(
     version="0.0.0",
     packages=find_packages(),
     package_data={
-        # Attempt to include everything in the model directory
-        # This pattern assumes all subdirectories under model are Python packages
         "gesture_classifier.submodules.model": ["*.*", "*/*.*", "*/*/*.*"],
     },
+    data_files=[
+        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
+        ("share/" + package_name, ["package.xml"]),
+    ],
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="naderahmed",
