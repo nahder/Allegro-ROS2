@@ -76,7 +76,7 @@ class AllegroGame(Node):
     # that we can control how often its updated (this is just the gesture publishing timer)
     def player_gesture_cb(self, msg):
         # stability_count_thresh = seconds / 0.02 (gestures published every 0.02s)
-        seconds = 2.5
+        seconds = 1.0
         stability_count_thresh = seconds / 0.02
         self.stability_count += 1  # gestures published every 0.02s
         if self.stability_count > stability_count_thresh:  # 3 seconds
@@ -98,7 +98,7 @@ class AllegroGame(Node):
 
     def accumulate_player_gestures(self):
 
-        if self.sampling_count < 500:
+        if self.sampling_count < 100 * self.round:
             self.round_logger.log("Start copying the robot's gestures!")
 
             if self.cur_player_gesture != self.prev_player_gesture:
@@ -112,7 +112,7 @@ class AllegroGame(Node):
 
             self.sampling_count += 1
 
-        else:  # 5 seconds have passed
+        else:
             self.round_logger.log("player gestures: %s" % self.player_gestures)
             request = SetConfig.Request()
             request.name = "nonono"
