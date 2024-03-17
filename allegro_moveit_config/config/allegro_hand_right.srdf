@@ -1,4 +1,4 @@
-<?xml version="1" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--This does not replace URDF, and is not an extension of URDF.
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
@@ -75,7 +75,7 @@
         <link name="link_11_tip"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-   <group_state name="Home" group="allegro_hand">
+    <group_state name="Home" group="allegro_hand">
         <joint name="joint_0" value="0"/>
         <joint name="joint_1" value="0"/>
         <joint name="joint_10" value="0"/>
@@ -164,6 +164,24 @@
         <joint name="joint_7" value="-0.016"/>
         <joint name="joint_8" value="-0.4388"/>
         <joint name="joint_9" value="1.2348"/>
+    </group_state>
+    <group_state name="L" group="allegro_hand">
+        <joint name="joint_0" value="-0.0909"/>
+        <joint name="joint_1" value="0.1134"/>
+        <joint name="joint_10" value="1.709"/>
+        <joint name="joint_11" value="0.1831"/>
+        <joint name="joint_12" value="0.263"/>
+        <joint name="joint_13" value="-0.1049"/>
+        <joint name="joint_14" value="0.1554"/>
+        <joint name="joint_15" value="0.0874"/>
+        <joint name="joint_2" value="0.0549"/>
+        <joint name="joint_3" value="0.0836"/>
+        <joint name="joint_4" value="-0.0441"/>
+        <joint name="joint_5" value="1.6099"/>
+        <joint name="joint_6" value="1.709"/>
+        <joint name="joint_7" value="0.014"/>
+        <joint name="joint_8" value="-0.0985"/>
+        <joint name="joint_9" value="1.6099"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="index_tip" parent_link="link_3" group="index_tip" parent_group="allegro_hand"/>
