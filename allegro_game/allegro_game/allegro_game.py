@@ -19,7 +19,7 @@ class AllegroGame(Node):
         self.cbgroup1 = MutuallyExclusiveCallbackGroup()
         self.cbgroup2 = MutuallyExclusiveCallbackGroup()
 
-        self.defined_gestures = ["rock", "scissors", "L"]
+        self.defined_gestures = ["rock", "scissors", "L", "pinch"]
 
         self.gesture_sub = self.create_subscription(
             String, "/gesture", self.player_gesture_cb, 10, callback_group=self.cbgroup1

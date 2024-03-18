@@ -184,17 +184,17 @@
         <joint name="joint_9" value="1.6099"/>
     </group_state>
     <group_state name="pinch" group="allegro_hand">
-        <joint name="joint_0" value="0.1169"/>
+        <joint name="joint_0" value="0.1428"/>
         <joint name="joint_1" value="1.6099"/>
-        <joint name="joint_10" value="1.709"/>
-        <joint name="joint_11" value="-0.1658"/>
-        <joint name="joint_12" value="1.1768"/>
-        <joint name="joint_13" value="0.4695"/>
-        <joint name="joint_14" value="0.6415"/>
-        <joint name="joint_15" value="0.2433"/>
+        <joint name="joint_10" value="1.703"/>
+        <joint name="joint_11" value="-0.0333"/>
+        <joint name="joint_12" value="1.3145"/>
+        <joint name="joint_13" value="0.4484"/>
+        <joint name="joint_14" value="0.5008"/>
+        <joint name="joint_15" value="-0.0329"/>
         <joint name="joint_2" value="-0.0492"/>
         <joint name="joint_3" value="0.1909"/>
-        <joint name="joint_4" value="0.2103"/>
+        <joint name="joint_4" value="0.2155"/>
         <joint name="joint_5" value="1.6099"/>
         <joint name="joint_6" value="0.0341"/>
         <joint name="joint_7" value="0.0176"/>
