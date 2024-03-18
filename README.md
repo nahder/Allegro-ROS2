@@ -1,7 +1,11 @@
 # A fun Simon Says game with an Allegro Hand
 
-- Author: Nader Ahmed
-- For more details, refer to my [portfolio post](https://nahder.github.io/manipulation_projects/simon_says/)
+The Allegro Hand is a robotic hand with four fingers and 16 degrees of freedom. In this project, it is used to play a challenging Simon Says game with a human player. The hand performs increasingly longer sequences of gestures that the player must mimic in the correct order. 
+
+For more details, refer to my [portfolio post](https://nahder.github.io/manipulation_projects/simon_says/).
+
+## Video Demo
+<iframe width="1920" height="1080" src="https://www.youtube.com/embed/JjlHqf-6iAA?si=YEV3slOnF0c7TsMo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
 ## Setup 
@@ -52,4 +56,4 @@ To play the game,
 
 Have fun!
 
-## 
+
