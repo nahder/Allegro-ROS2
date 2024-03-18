@@ -2,10 +2,11 @@
 
 The Allegro Hand is a robotic hand with four fingers and 16 degrees of freedom. In this project, it is used to play a challenging Simon Says game with a human player. The hand performs increasingly longer sequences of gestures that the player must mimic in the correct order. 
 
-For more details, refer to my [portfolio post](https://nahder.github.io/manipulation_projects/simon_says/).
+For more details and a longer demo, refer to my [portfolio post](https://nahder.github.io/manipulation_projects/simon_says/).
 
 ## Video Demo
-[![Video](https://img.youtube.com/vi/JjlHqf-6iAA/maxresdefault.jpg)](https://www.youtube.com/watch?v=JjlHqf-6iAA)
+<video src="https://github.com/nahder/Allegro-ROS2/assets/71537050/bdaf1176-4fe3-4757-9f8f-dbc4102a4fc1"></video>
+
 
 
 
