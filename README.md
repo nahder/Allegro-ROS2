@@ -1,4 +1,4 @@
-# A fun Simon Says game with an Allegro Hand
+# Simon says with the Allegro Hand
 
 The Allegro Hand is a robotic hand with four fingers and 16 degrees of freedom. In this project, it is used to play a challenging Simon Says game with a human player. The hand performs increasingly longer sequences of gestures that the player must mimic in the correct order. 
 
