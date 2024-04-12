@@ -188,7 +188,6 @@ private:
 
   void wrong_answer()
   {
-    //cycle between nonono1,2,3 two times
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 16; j++) {
         q_des[j] = nonono1[j];
@@ -211,7 +210,7 @@ private:
 int main(int argc, char * argv[])
 {
   CreateBHandAlgorithm();
-  OpenCAN();
+  // OpenCAN();
   memset(&vars, 0, sizeof(vars));
   memset(q, 0, sizeof(q));
   memset(q_des, 0, sizeof(q_des));
@@ -224,7 +223,7 @@ int main(int argc, char * argv[])
   rclcpp::spin(node);
   rclcpp::shutdown();
 
-  CloseCAN();
+  // CloseCAN();
   DestroyBHandAlgorithm();
   return 0;
 }

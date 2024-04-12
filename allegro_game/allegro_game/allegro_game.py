@@ -5,12 +5,14 @@ from std_msgs.msg import String
 from std_srvs.srv import Trigger
 from control_hand.srv import SetConfig
 import numpy as np
-from std_srvs.srv import Empty
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from enum import Enum
+from rclpy.action import ActionClient
+from text_to_speech_msgs.action import TTS
+from text_to_speech_msgs.msg import Config
+
+# TODO: vcs repos the sound
 
 
-# CURRENT GESTURES: 0: rock, 1: paper, 2: scissors,(3: okay,  9: nonono)
 class AllegroGame(Node):
     def __init__(self):
         super().__init__("allegro_game")
@@ -46,6 +48,31 @@ class AllegroGame(Node):
         self.sampling_count = 0
         self.stability_count = 0
         self.play_round = True
+
+        self._action_client = ActionClient(self, TTS, "/text_to_speech/tts")
+
+    def send_text_to_speech(
+        self, text, volume=0.5, rate=120, language="en", gender="m", tool=1
+    ):
+        if not self._action_client.wait_for_server(timeout_sec=10.0):
+            self.get_logger().error("TTS action server not available!")
+            return False
+
+        config_msg = Config()
+        config_msg.volume = volume  # float32
+        config_msg.rate = rate  # int32
+        config_msg.language = language  # string
+        config_msg.gender = gender  # string
+        config_msg.tool = tool  # int32,
+
+        goal_msg = TTS.Goal()
+        goal_msg.text = text
+        goal_msg.config = config_msg
+
+        self.get_logger().info("Sending goal request to TTS...")
+
+        future = self._action_client.send_goal_async(goal_msg)
+        rclpy.spin_until_future_complete(self, future)
 
     # perform as many gestures as the round number
     # want to generate #round indices which are indexable to defined_gestures
@@ -99,7 +126,7 @@ class AllegroGame(Node):
     def accumulate_player_gestures(self):
         if self.sampling_count < 100 * self.round:
             self.round_logger.log("Start copying the robot's gestures!")
-
+            self.send_text_to_speech("Start copying the robot's gestures!")
             if self.cur_player_gesture != self.prev_player_gesture:
                 if self.round_logger.log("Added gesture: %s" % self.cur_player_gesture):
                     # Gesture successfully logged, add it to the player_gestures list

@@ -1,9 +1,15 @@
 <launch> 
-
+<!-- 
     <node pkg="gesture_classifier" exec="gesture_classifier" name="gesture_classifier"
-        output="screen" />
+        output="screen" /> -->
 
     <node pkg="allegro_game" exec="allegro_game" name="allegro_game"
         output="screen" />
+
+
+    <include file="$(find-pkg-share text_to_speech)/text_to_speech.launch.py"/>
+
+
+        <!-- ros2 launch text_to_speech text_to_speech.launch.py -->
     
 </launch> 
